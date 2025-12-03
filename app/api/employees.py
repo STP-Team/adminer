@@ -1,29 +1,50 @@
 from datetime import datetime
+from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import ValidationError
 from stp_database.repo.STP import MainRequestsRepo
 
 from app.core.dependencies import get_repo
-from app.schemas.employee import EmployeeAll, EmployeeCreate, EmployeeRead
+from app.schemas.employee import (
+    EmployeeList,
+    EmployeeRead,
+)
 
 router = APIRouter(prefix="/api/employees", tags=["Employees"])
 
 
 @router.get(
     "/",
-    name="Получить всех сотрудников",
-    description="Получает список всех сотрудников",
+    name="Получить сотрудников",
+    description="Получает список сотрудников с фильтрами",
     status_code=status.HTTP_200_OK,
     responses={
         404: {"description": "Not found"},
         400: {"description": "Server error"},
     },
-    response_model=EmployeeAll,
+    response_model=EmployeeList,
 )
-async def get_employees(repo: MainRequestsRepo = Depends(get_repo)):
+async def get_employees(
+    main_id: int | None = Query(None, description="Основной идентификатор"),
+    user_id: int | None = Query(None, description="Идентификатор Telegram"),
+    username: str | None = Query(None, description="Имя пользователя Telegram"),
+    fullname: str | None = Query(None, description="ФИО"),
+    email: str | None = Query(None, description="Рабочая почта"),
+    head: str | None = Query(None, description="ФИО руководителя"),
+    roles: List[int] | None = Query(None, description="Роли"),
+    repo: MainRequestsRepo = Depends(get_repo),
+):
     try:
-        employees_data = await repo.employee.get_users()
+        employees_data = await repo.employee.get_users(
+            main_id=main_id,
+            user_id=user_id,
+            username=username,
+            fullname=fullname,
+            email=email,
+            head=head,
+            roles=roles,
+        )
 
         if not employees_data:
             raise HTTPException(
@@ -35,38 +56,7 @@ async def get_employees(repo: MainRequestsRepo = Depends(get_repo)):
 
         employees = [EmployeeRead.model_validate(emp) for emp in employees_data]
 
-        return EmployeeAll(employees=employees)
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=f"Server error: {e}"
-        )
-
-
-@router.get(
-    "/{user_id}",
-    name="Получить сотрудника",
-    description="Получает сотрудника по идентификатору Telegram",
-    status_code=status.HTTP_200_OK,
-    responses={
-        404: {"description": "Not found"},
-        400: {"description": "Server error"},
-    },
-    response_model=EmployeeRead,
-)
-async def get_employee(
-    user_id: int,
-    repo: MainRequestsRepo = Depends(get_repo),
-):
-    try:
-        employee = await repo.employee.get_users(user_id=user_id)
-
-        if employee is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
-            )
-
-        return employee
+        return EmployeeList(employees=employees)
 
     except Exception as e:
         raise HTTPException(
@@ -83,27 +73,22 @@ async def get_employee(
 )
 async def create_employee(
     request: Request,
-    employee_data: EmployeeCreate,
+    division: str = Query(str, description="Направление сотрудника"),
+    position: str = Query(str, description="Должность сотрудника"),
+    fullname: str = Query(str, description="ФИО сотрудника"),
+    head: str = Query(str, description="Руководитель сотрудника"),
+    role: int = Query(0, description="Роль сотрудника"),
+    user_id: int | None = Query(None, description="Идентификатор Telegram сотрудника"),
     repo: MainRequestsRepo = Depends(get_repo),
 ):
-    """Создает сотрудника в базе данных.
-
-    Args:
-        request:
-        employee_data: Модель сотрудника с валидацией
-        repo: Репозиторий БД
-
-    Returns:
-        Модель EmployeeRead при успехе, иначе ошибка
-    """
     try:
         employee = await repo.employee.add_user(
-            division=employee_data.division,
-            position=employee_data.position,
-            fullname=employee_data.fullname,
-            head=employee_data.head,
-            role=employee_data.role,
-            user_id=employee_data.user_id,
+            division=division,
+            position=position,
+            fullname=fullname,
+            head=head,
+            role=role,
+            user_id=user_id,
         )
 
         if not employee:
@@ -135,16 +120,18 @@ async def create_employee(
 @router.delete(
     "/",
     name="Удалить сотрудника",
-    description="Удаляет сотрудника из базы",
     status_code=status.HTTP_200_OK,
 )
 async def delete_employee(
     request: Request,
-    user_id: int,
+    fullname: str | None = Query(None, description="ФИО сотрудника"),
+    user_id: int | None = Query(None, description="Идентификатор Telegram сотрудника"),
     repo: MainRequestsRepo = Depends(get_repo),
 ):
     try:
-        deleted_count = await repo.employee.delete_user(user_id=user_id)
+        deleted_count = await repo.employee.delete_user(
+            fullname=fullname, user_id=user_id
+        )
 
         if deleted_count <= 0:
             raise HTTPException(

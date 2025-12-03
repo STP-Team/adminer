@@ -1,15 +1,6 @@
 from pydantic import BaseModel
 
 
-class EmployeeCreate(BaseModel):
-    user_id: int | None = None
-    division: str
-    position: str
-    fullname: str
-    head: str
-    role: int = 0
-
-
 class EmployeeRead(BaseModel):
     id: int
     user_id: int | None
@@ -28,10 +19,5 @@ class EmployeeRead(BaseModel):
         from_attributes = True
 
 
-class EmployeeSearch(BaseModel):
-    main_id: int | None
-    user_id: int | None
-
-
-class EmployeeAll(BaseModel):
+class EmployeeList(BaseModel):
     employees: list[EmployeeRead]
