@@ -3,11 +3,11 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Query, Request, status
 from pydantic import ValidationError
 
-from app.core.db import RepoDep
+from app.api.deps import RepoDep
 from app.schemas.employee import EmployeeDTO, EmployeesList, PatchEmployeeDTO
 
 router = APIRouter(
-    prefix="/api/employees",
+    prefix="/employees",
     tags=["Сотрудники"],
 )
 

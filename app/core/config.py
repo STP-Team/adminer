@@ -1,8 +1,34 @@
+from typing import Annotated, Any
+
+from pydantic import AnyUrl, BeforeValidator, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import URL
+
+
+def parse_cors(v: Any) -> list[str] | str:
+    if isinstance(v, str) and not v.startswith("["):
+        return [i.strip() for i in v.split(",") if i.strip()]
+    elif isinstance(v, list | str):
+        return v
+    raise ValueError(v)
 
 
 class Settings(BaseSettings):
+    PROJECT_NAME: str
+    OPENAPI_URL: str
+    API_V1_STR: str = "/api/v1"
+    FRONTEND_HOST: str
+
+    BACKEND_CORS_ORIGINS: Annotated[
+        list[AnyUrl] | str, BeforeValidator(parse_cors)
+    ] = []
+
+    @computed_field
+    @property
+    def all_cors_origins(self) -> list[str]:
+        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
+            self.FRONTEND_HOST
+        ]
+
     API_HOST: str
     API_PORT: int
 
@@ -15,38 +41,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
+        env_ignore_empty=True,
+        extra="ignore",
     )
-
-    def construct_sqlalchemy_url(
-        self,
-        driver="aiomysql",
-    ) -> URL:
-        """Собирает строку SQLAlchemy для подключения к MariaDB.
-
-        Args:
-            db_name: Название базы данных
-            driver: Драйвер для подключения
-
-        Returns:
-            Возвращает собранную строку для подключения к базе используя SQLAlchemy
-        """
-        connection_url = URL.create(
-            f"mysql+{driver}",
-            username=self.DB_USER,
-            password=self.DB_PASS,
-            host=self.DB_HOST,
-            port=self.DB_PORT if self.DB_PORT else 3306,
-            database=self.DB_NAME,
-            query={
-                "charset": "utf8mb4",
-                "use_unicode": "1",
-                "sql_mode": "TRADITIONAL",
-                "connect_timeout": "30",
-                "autocommit": "false",
-            },
-        )
-
-        return connection_url
 
 
 settings = Settings()
