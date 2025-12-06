@@ -60,7 +60,7 @@ async def get_employees(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Server error: {e}",
-        ) from e
+        )
 
 
 @router.post(
@@ -102,7 +102,7 @@ async def create_employee(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Ошибка валидации входных данных: {e}",
-        ) from e
+        )
 
     except Exception:
         raise HTTPException(
@@ -113,7 +113,7 @@ async def create_employee(
                 "message": "Внутренняя ошибка сервера при создании сотрудника",
                 "errorCode": "INTERNAL_SERVER_ERROR",
             },
-        ) from None
+        )
 
 
 @router.patch(
@@ -145,7 +145,7 @@ async def patch_employee(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Ошибка валидации входных данных: {e}",
-        ) from e
+        )
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -155,7 +155,7 @@ async def patch_employee(
                 "message": "Внутренняя ошибка сервера при обновлении сотрудника",
                 "errorCode": "INTERNAL_SERVER_ERROR",
             },
-        ) from None
+        )
 
 
 @router.delete(
@@ -185,7 +185,7 @@ async def delete_employee(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Ошибка валидации входных данных: {e}",
-        ) from e
+        )
 
     except Exception:
         raise HTTPException(
@@ -196,4 +196,4 @@ async def delete_employee(
                 "message": "Внутренняя ошибка сервера при удалении сотрудника",
                 "errorCode": "INTERNAL_SERVER_ERROR",
             },
-        ) from None
+        )
