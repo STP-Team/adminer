@@ -1,4 +1,5 @@
 import {useAuth} from '../contexts/AuthContext';
+import {ModeToggle} from "@/components/mode-toggle";
 
 export function Dashboard() {
     const {userInfo, logout} = useAuth();
@@ -20,6 +21,7 @@ export function Dashboard() {
                     <p><strong>User ID:</strong> {userInfo.user_id}</p>
                     <p><strong>Роль:</strong> {userInfo.role}</p>
                 </div>
+                <ModeToggle/>
                 <button
                     onClick={logout}
                     style={{

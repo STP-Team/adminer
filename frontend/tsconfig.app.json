@@ -28,13 +28,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     /* Path mapping */
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@components/*": [
-        "components/*"
-      ],
-      "@assets/*": [
-        "assets/*"
+      "@/*": [
+        "./src/*"
       ]
     }
   },
