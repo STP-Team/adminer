@@ -25,6 +25,7 @@ router = APIRouter(
 )
 async def get_employees(
     repo: RepoDep,
+    _current_user: CurrentUserDep,
     main_id: int | None = Query(None, description="Основной идентификатор"),
     user_id: int | None = Query(None, description="Идентификатор Telegram"),
     username: str | None = Query(None, description="Имя пользователя Telegram"),
