@@ -10,9 +10,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Python dependencies
 COPY --from=uv /uv /usr/local/bin/uv
-COPY pyproject.toml uv.lock* ./
+COPY ../pyproject.toml ../uv.lock* ./
 RUN uv sync --frozen --no-dev
-COPY backend/ ./app/
+COPY . ./app/
 
 # Add virtual environment to PATH
 ENV PATH="/app/.venv/bin:$PATH"
@@ -24,7 +24,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Create non-root user for security
 RUN groupadd --gid 1001 appuser && \
     useradd --uid 1001 --gid appuser --shell /bin/bash --create-home appuser && \
-    chown -R appuser:appuser /backend
+    chown -R appuser:appuser /app
 
 # Switch to non-root user
 USER appuser
