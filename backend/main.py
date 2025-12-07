@@ -3,8 +3,8 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
-from app.api.main import api_router
-from app.core.config import settings
+from backend.api.main import api_router
+from backend.core.config import settings
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -35,4 +35,6 @@ async def health() -> dict[str, str]:
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host=settings.API_HOST, port=settings.API_PORT, reload=True)
+    uvicorn.run(
+        "main:backend", host=settings.API_HOST, port=settings.API_PORT, reload=True
+    )

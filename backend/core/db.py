@@ -1,6 +1,6 @@
 from stp_database import create_engine
 
-from app.core.config import settings
+from backend.core.config import settings
 
 engine = create_engine(
     host=settings.DB_HOST,

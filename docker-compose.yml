@@ -6,4 +6,4 @@ services:
       - "127.0.0.1:${API_PORT}:8000"
     restart: unless-stopped
     env_file:
-      - ".env"
+      - "backend/.env"

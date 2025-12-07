@@ -3,9 +3,9 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Query, Request, status
 from pydantic import ValidationError
 
-from app.api.deps import RepoDep
-from app.schemas.achievement import AchievementDTO, AchievementsList
-from app.schemas.employee import PatchEmployeeDTO
+from backend.api.deps import CurrentUserDep, RepoDep
+from backend.schemas.achievement import AchievementDTO, AchievementsList
+from backend.schemas.employee import PatchEmployeeDTO
 
 router = APIRouter(prefix="/achievements", tags=["Достижения"])
 
@@ -23,6 +23,7 @@ router = APIRouter(prefix="/achievements", tags=["Достижения"])
 )
 async def get_achievements(
     repo: RepoDep,
+    current_user: CurrentUserDep,
     division: str | None = Query(None, description="Направление сотрудника"),
     achievement_id: int | None = Query(None, description="Идентификатор достижения"),
 ):

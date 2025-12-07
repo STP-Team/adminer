@@ -16,9 +16,12 @@ def parse_cors(v: Any) -> list[str] | str:
 
 
 class AuthJWT(BaseModel):
-    private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
-    public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
+    private_key_path: Path = BASE_DIR / "certs" / "jwt_private.pem"
+    public_key_path: Path = BASE_DIR / "certs" / "jwt_public.pem"
     algorithm: str = "EdDSA"
+
+    access_token_expire_minutes: int = 60 * 24  # 24 hours
+    refresh_token_expire_minutes: int = 60 * 24 * 7  # 7 days
 
 
 class Settings(BaseSettings):
@@ -38,6 +41,9 @@ class Settings(BaseSettings):
         ]
 
     auth_jwt: AuthJWT = AuthJWT()
+
+    # Telegram Bot Token for authentication validation
+    TELEGRAM_BOT_TOKEN: str = ""
 
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000

@@ -1,4 +1,6 @@
 .idea
-.env
+backend/.env
 __pycache__
 certs
+node_modules
+.env
