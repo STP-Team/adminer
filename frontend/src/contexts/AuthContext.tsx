@@ -8,6 +8,7 @@ interface UserInfo {
     username?: string;
     division?: string;
     position?: string;
+    photo_url?: string;
 }
 
 interface AuthContextType {
