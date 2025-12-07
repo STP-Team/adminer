@@ -1,4 +1,4 @@
-import {useAuth} from '../contexts/AuthContext';
+import {useAuth} from '@/contexts/AuthContext';
 import {ModeToggle} from "@/components/mode-toggle";
 
 export function Dashboard() {

@@ -1,8 +1,8 @@
 import './App.css'
-import {AuthProvider, useAuth} from './contexts/AuthContext';
-import {TelegramLoginButton} from "./components/TelegramLoginButton";
-import {Dashboard} from "./components/Dashboard";
-import {ThemeProvider} from "./components/theme-provider";
+import {AuthProvider, useAuth} from '@/contexts/AuthContext';
+import {TelegramLoginButton} from "@/components/TelegramLoginButton";
+import {Dashboard} from "@/components/Dashboard";
+import {ThemeProvider} from "@/components/theme-provider";
 
 function AppContent() {
     const {isAuthenticated, loading} = useAuth();
