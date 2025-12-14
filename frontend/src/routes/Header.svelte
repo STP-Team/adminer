@@ -1,8 +1,10 @@
 <script lang="ts">
     import {resolve} from '$app/paths';
+    import {ModeWatcher} from "mode-watcher";
     import {page} from '$app/state';
 </script>
 
+<ModeWatcher/>
 <header>
     <div class="corner">
     </div>

@@ -23,7 +23,7 @@
 </script>
 
 <svelte:head>
-    <title>Adminer</title>
+    <title>Админер</title>
     <meta name="description" content="СТП Администрирование"/>
 </svelte:head>
 
